@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  blog_app_front:
+    build:
+      context: .
+    container_name: blog_app_front
+    image: leandrofuccia/blog-app-front:${TIMESTAMP:-latest}
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development  
+      NEXT_PUBLIC_API_URL: http://blog_app:3002  # Agora acessando o back-end corretamente     
+    networks:
+      - app-network  # Agora usando a mesma rede do back-end!
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+    external: true

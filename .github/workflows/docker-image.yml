@@ -1,0 +1,55 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Verificar se package.json existe
+        run: |
+          if [ ! -f "package.json" ]; then
+            echo "Arquivo package.json não encontrado na raiz do projeto."
+            exit 1
+          fi
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Build da aplicação Next.js
+        run: npm run build
+
+      - name: Criar timestamp para tag da imagem
+        run: echo "TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Verificar versão do Docker
+        run: docker --version
+      
+      - name: Build da imagem Docker manualmente
+        run: |
+          docker build -t leandrofuccia/blog-app-front:${{ env.TIMESTAMP }} .
+
+      - name: Login no Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push da imagem com tag de timestamp
+        run: docker push leandrofuccia/blog-app-front:${{ env.TIMESTAMP }}
+
+      - name: Adicionar tag latest e fazer push
+        run: |
+          docker tag leandrofuccia/blog-app-front:${{ env.TIMESTAMP }} leandrofuccia/blog-app-front:latest
+          docker push leandrofuccia/blog-app-front:latest
