@@ -131,6 +131,7 @@ import {
   Wrapper,
 } from '@/components/LoginComp';
 import styled from 'styled-components';
+import Image from 'next/image';
 
 // Novo componente para o logo
 const Logo = styled.img`
@@ -198,7 +199,7 @@ const LoginPage = () => {
       <Logo src="/icons/logo-aulagen.png" alt="Logo AulaGen" />
       <Card>
         <Header>
-          <img src="/icons/login.png" alt="Login Icon" />
+          <Image src="/icons/login.svg" alt="Login Icon" width={36} height={36} />
           <h1>Login</h1>
         </Header>
 
@@ -218,15 +219,10 @@ const LoginPage = () => {
                   setEmailError(null);
                 }}
               />
-              <StyledErrorMessage>
-                <ErrorMessage name="email" />
-              </StyledErrorMessage>
-
+              <ErrorMessage name="email" component={StyledErrorMessage} />
+              
               <StyledField name="password" type="password" placeholder="Senha" />
-              <StyledErrorMessage>
-                <ErrorMessage name="password" />
-              </StyledErrorMessage>
-
+              <ErrorMessage name="password" component={StyledErrorMessage} />
               {errorMessage && <StyledErrorMessage>{errorMessage}</StyledErrorMessage>}
 
               <Button type="submit">Entrar</Button>

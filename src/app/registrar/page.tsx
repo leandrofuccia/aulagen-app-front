@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { ErrorPopup, SuccessPopup } from '@/components/Common';
 import { Button, Card, Header, RegisterLink, StyledErrorMessage, StyledField, StyledSelect, Wrapper,  } from '@/components/LoginComp';
+import Image from 'next/image';
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -94,7 +95,7 @@ const RegisterPage = () => {
     <Wrapper>
       <Card>
         <Header>
-          <img src="/icons/login.svg" alt="Login Icon" />
+          <Image src="/icons/login.svg" alt="Login Icon" width={36} height={36} />
           <h1>Cadastro</h1>
           {successMessage && (
           <SuccessPopup>

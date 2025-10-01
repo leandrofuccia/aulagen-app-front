@@ -161,21 +161,21 @@ const ReadPlanoAulaPage = () => {
               📋 Detalhes do Plano
             </Heading4>
 
-            <ReactMarkdown
-              children={plano?.detalhes_plano_completo || ""}
-              components={{
-                h3: ({ node, ...props }) => <MarkdownSectionTitle  {...props} />,
-                p: ({ node, ...props }) => {
-                  const texto = String(props.children);
-                  if (texto.includes("Plano de Aula Detalhado")) {
-                    return <MarkdownSubTitle>{texto}</MarkdownSubTitle>;
-                  }
-                  return <MarkdownP>{texto}</MarkdownP>;
-                },
-                ul: ({ node, ...props }) => <MarkdownUl {...props} />,
-                li: ({ node, ...props }) => <MarkdownLi {...props} />,
-              }}
-            />
+            <ReactMarkdown components={{
+              h3: ({ node, ...props }) => <MarkdownSectionTitle {...props} />,
+              p: ({ node, ...props }) => {
+                const texto = String(props.children);
+                if (texto.includes("Plano de Aula Detalhado")) {
+                  return <MarkdownSubTitle>{texto}</MarkdownSubTitle>;
+                }
+                return <MarkdownP>{texto}</MarkdownP>;
+              },
+              ul: ({ node, ...props }) => <MarkdownUl {...props} />,
+              li: ({ node, ...props }) => <MarkdownLi {...props} />,
+            }}>
+              {plano?.detalhes_plano_completo || ""}
+            </ReactMarkdown>
+
           </MarkdownCard>
           
           <SectionCard>
