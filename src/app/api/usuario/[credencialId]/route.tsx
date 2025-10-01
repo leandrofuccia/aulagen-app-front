@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     console.log("Credencial ID recebido:", credencialId);
 
     // Faz a chamada ao back-end para buscar o ocupacao do usuário
-    //const response = await axios.get(`http://localhost:3002/usuario/credencial/${credencialId}`, {
+    //const response = await axios.get(`http://localhost:3001/usuario/credencial/${credencialId}`, {
     const response = await axios.get(apiUrl+`${credencialId}`, {
       headers: {
         Authorization: token, // Inclui o token no cabeçalho

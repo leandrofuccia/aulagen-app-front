@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     console.log("Credencial ID recebido:", usuarioid);
 
     // Faz a chamada ao back-end para buscar o ocupacao do usuário
-    //const response = await axios.get(`http://localhost:3002/usuario/${usuarioid}`, {
+    //const response = await axios.get(`http://localhost:3001/usuario/${usuarioid}`, {
     const response = await axios.get(apiUrl+`${usuarioid}`, {
       headers: {
         Authorization: token, // Inclui o token no cabeçalho

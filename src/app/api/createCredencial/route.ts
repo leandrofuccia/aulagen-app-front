@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       );
     }
     
-    //const response = await axios.post("http://localhost:3002/credencial",
+    //const response = await axios.post("http://localhost:3001/credencial",
     const response = await axios.post(apiUrl,
       { username, password },
       

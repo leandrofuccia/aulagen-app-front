@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     }
 
     // Faz a chamada ao back-end com o token no cabeçalho
-    //const response = await axios.get("http://localhost:3002/usuario", {
+    //const response = await axios.get("http://localhost:3001/usuario", {
     const response = await axios.get(apiUrl, {
       params: { page, limit },
       headers: {

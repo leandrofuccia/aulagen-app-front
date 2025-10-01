@@ -7,7 +7,7 @@ export async function POST(req: Request) {
     const { username, password } = await req.json();
 
     // Faz chamada ao back-end
-    const response = await axios.post('http://localhost:3002/credencial/signin', {
+    const response = await axios.post('http://localhost:3001/credencial/signin', {
       username,
       password,
     });
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
 
     const { username, password } = await req.json();
 
-    //const response = await axios.post('http://blog_app:3002/credencial/signin', {
+    //const response = await axios.post('http://aulagen_app:3001/credencial/signin', {
     const response = await axios.post(apiUrl, {
       username,
       password,

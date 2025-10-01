@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     }
 
     // Faz a chamada ao back-end para buscar a planoAula
-    //const response = await axios.get(`http://localhost:3002/posts/${id}`, {
+    //const response = await axios.get(`http://localhost:3001/posts/${id}`, {
     const response = await axios.get(apiUrl+ `${id}`, {
       headers: {
         Authorization: token,

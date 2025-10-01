@@ -1,15 +1,15 @@
 version: "3.8"
 services:
-  blog_app_front:
+  aulagen_app_front:
     build:
       context: .
-    container_name: blog_app_front
+    container_name: aulagen_app_front
     image: leandrofuccia/aulagen-app-front:${TIMESTAMP:-latest}
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: development  
-      NEXT_PUBLIC_API_URL: http://blog_app:3002  # Agora acessando o back-end corretamente     
+      NEXT_PUBLIC_API_URL: http://aulagen_app:3001  # Agora acessando o back-end corretamente     
     networks:
       - app-network  # Agora usando a mesma rede do back-end!
     restart: unless-stopped
