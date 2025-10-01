@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Title } from "./Typography";
-import { useThemeToggle } from "@/context/ThemeContext";
+//import { useThemeToggle } from "@/context/ThemeContext";
 import {ButtonGroup} from "@/components/Common"
 import IconButton from "./IconButton";
 
@@ -28,13 +28,21 @@ const HeaderContainer = styled.header`
   }
 `;
 
+const Logo = styled.img`
+  height: 120px;
+  width: auto;
+
+  @media (max-width: 768px) {
+    height: 32px;
+  }
+`;
+
 interface HeaderProps {
   onLogout: () => void;
   onBack?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onLogout, onBack}) => {
-  const { toggleTheme, isDark } = useThemeToggle();
   const [fullName, setUsername] = useState<string>("Usuário");
   const username = fullName.split(" ")[0]; 
 
@@ -60,17 +68,12 @@ const Header: React.FC<HeaderProps> = ({ onLogout, onBack}) => {
             onClick={onBack}
           />
         )}
-        <Title>Aula Gen</Title>
+        <Logo src="/icons/logo-aulagen.png" alt="Logo AulaGen" />
+
       </div>
       <ButtonGroup>
         <span className="username">Olá, {username}!</span>
-        <IconButton
-          icon={isDark ? "/icons/sun.svg" : "/icons/moon.svg"}
-          alt=""
-          tooltip={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
-          label={isDark ? "Tema claro" : "Tema escuro"}
-          onClick={toggleTheme}
-        />
+       
         <IconButton
           icon="/icons/logout.png"
           alt=""

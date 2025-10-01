@@ -6,24 +6,71 @@ import { useParams, useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 
 import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
+import Loading from "@/components/Loading";
 import {
   ErrorPopup,
   Heading3,
   Heading4,
   MainWrapper,
   Paragraph,
-  PlanoContent,
 } from "@/components/Common";
-import Loading from "@/components/Loading";
+
+import {
+  PageWrapper,
+  SectionCard,
+  MarkdownCard,
+  AulaCard,
+  AulaTitle,
+  AtividadesTable,
+  StyledTable,
+  TableHead,
+  TableRow,
+  TableCell,
+  MarkdownH3,
+  MarkdownP,
+  MarkdownUl,
+  MarkdownLi,
+  MarkdownSectionTitle,
+  MarkdownSubTitle,
+  RecursoItem,
+  RecursosList,
+  AvaliacaoTexto,
+  PlanoHeader,
+  PlanoTitulo,
+  PlanoInfoGrid,
+  PlanoInfoItem,
+} from "@/styles/detalhePlanoStyles";
+
 import { IPlanoAulaDetalhado } from "@/types/planoAulaDetalhado";
-import Sidebar from "@/components/Sidebar";
 
 const ReadPlanoAulaPage = () => {
   const [plano, setPlano] = useState<IPlanoAulaDetalhado | null>(null);
-  const params = useParams();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const params = useParams();
   const router = useRouter();
+
+  const renderDetalhesPlano = (texto: string) => {
+    const linhas = texto.split("\n").filter((linha) => linha.trim() !== "");
+
+    return linhas.map((linha, index) => {
+      if (linha.toLowerCase().includes("contextualização")) {
+        return <Heading4 key={index}>🎨 Contextualização</Heading4>;
+      }
+
+      if (linha.toLowerCase().includes("metodologia")) {
+        return <Heading4 key={index}>🧪 Metodologia</Heading4>;
+      }
+
+      if (/^\d+\./.test(linha)) {
+        return <Paragraph key={index} style={{ marginLeft: "20px" }}>{linha}</Paragraph>;
+      }
+
+      return <Paragraph key={index}>{linha}</Paragraph>;
+    });
+  };
+
 
   useEffect(() => {
     const fetchPlanoAula = async () => {
@@ -34,10 +81,10 @@ const ReadPlanoAulaPage = () => {
         });
 
         setPlano(response.data.planos);
-        setIsLoading(false);
       } catch (error: any) {
         const message = error?.response?.data?.message || "Erro ao buscar plano de aula.";
         setErrorMessage(message);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -61,133 +108,142 @@ const ReadPlanoAulaPage = () => {
 
   return (
     <>
-    { <Sidebar
-      links={[
-        { label: "Administração", href: "/admin" },
-      ]}
-    /> }
-    <MainWrapper>
-      <Header onLogout={handleLogout} onBack={() => router.back()} />
-      <main style={{ padding: "30px", maxWidth: "1000px", margin: "auto" }}>
-        <PlanoContent>
-          <Heading3>📘 {plano?.titulo}</Heading3>
-          <Paragraph><strong>Duração Total:</strong> {plano?.duracao_total}</Paragraph>
-          {plano?.habilidade_bncc ? (
-            <>
-              <Paragraph><strong>Componente Curricular:</strong> {plano.habilidade_bncc.componenteCurricular}</Paragraph>
-              <Paragraph><strong>Ano/Série:</strong> {plano.habilidade_bncc.anoSerie}</Paragraph>
-              <Paragraph><strong>Código BNCC:</strong> {plano.habilidade_bncc.codigo}</Paragraph>
-              <Paragraph><strong>Habilidade BNCC:</strong> {plano.habilidade_bncc.descricao}</Paragraph>
-            </>
-          ) : (
-            <Paragraph style={{ color: "#888" }}>
-              <strong>Habilidade BNCC:</strong> Não vinculada a este plano.
-            </Paragraph>
-          )}
+      <Sidebar links={[{ label: "Administração", href: "/admin" }]} />
+      <MainWrapper>
+        <Header onLogout={handleLogout} onBack={() => router.back()} />
+        <PageWrapper>
+          <SectionCard>     
+            <PlanoHeader>
+              <PlanoTitulo>📊 {plano?.titulo}</PlanoTitulo>
 
-          <Heading4 style={{ marginTop: "30px" }}>📦 Recursos Gerais</Heading4>
-          <ul>
+              <PlanoInfoGrid>
+                <PlanoInfoItem>
+                  <strong>⏱ Duração Total:</strong>
+                  {plano?.duracao_total}
+                </PlanoInfoItem>
+
+                <PlanoInfoItem>
+                  <strong>📘 Componente Curricular:</strong>
+                  {plano?.habilidade_bncc?.componenteCurricular}
+                </PlanoInfoItem>
+
+                <PlanoInfoItem>
+                  <strong>🎓 Ano/Série:</strong>
+                  {plano?.habilidade_bncc?.anoSerie}
+                </PlanoInfoItem>
+
+                <PlanoInfoItem>
+                  <strong>🧾 Código BNCC:</strong>
+                  {plano?.habilidade_bncc?.codigo}
+                </PlanoInfoItem>
+
+                <PlanoInfoItem>
+                  <strong>🧠 Habilidade BNCC:</strong>
+                  {plano?.habilidade_bncc?.descricao}
+                </PlanoInfoItem>
+              </PlanoInfoGrid>
+            </PlanoHeader>          
+          </SectionCard>
+
+          <SectionCard>
+          <Heading4 style={{ color: "#0078D4" }}>
+            📦 Recursos Gerais</Heading4>
+          <RecursosList>
             {plano?.recursos_gerais.map((item, index) => (
-              <li key={index}>{item}</li>
+              <RecursoItem key={index}>{item}</RecursoItem>
             ))}
-          </ul>
+          </RecursosList>
+        </SectionCard>
 
-          <Heading4 style={{ marginTop: "30px" }}>📋 Detalhes do Plano</Heading4>
-          <div style={{
-            background: "#f9f9f9",
-            padding: "15px",
-            borderRadius: "8px",
-            border: "1px solid #ddd"
-          }}>
+          
+          <MarkdownCard>
+            <Heading4 style={{ fontSize: "1.8rem", color: "#0078D4", marginBottom: "20px" }}>
+              📋 Detalhes do Plano
+            </Heading4>
+
             <ReactMarkdown
               children={plano?.detalhes_plano_completo || ""}
               components={{
-                h3: ({ node, ...props }) => <h3 style={{ marginTop: "20px", color: "#0078D4" }} {...props} />,
-                p: ({ node, ...props }) => <p style={{ marginBottom: "10px" }} {...props} />,
-                ul: ({ node, ...props }) => <ul style={{ paddingLeft: "20px", marginBottom: "10px" }} {...props} />,
-                li: ({ node, ...props }) => <li style={{ marginBottom: "5px" }} {...props} />,
+                h3: ({ node, ...props }) => <MarkdownSectionTitle  {...props} />,
+                p: ({ node, ...props }) => {
+                  const texto = String(props.children);
+                  if (texto.includes("Plano de Aula Detalhado")) {
+                    return <MarkdownSubTitle>{texto}</MarkdownSubTitle>;
+                  }
+                  return <MarkdownP>{texto}</MarkdownP>;
+                },
+                ul: ({ node, ...props }) => <MarkdownUl {...props} />,
+                li: ({ node, ...props }) => <MarkdownLi {...props} />,
               }}
             />
-          </div>
+          </MarkdownCard>
+          
+          <SectionCard>
+            <Heading4 style={{ color: "#0078D4", fontSize: "1.5rem", marginBottom: "12px" }}>
+              📝 Avaliação
+            </Heading4>
+            <AvaliacaoTexto>{plano?.avaliacao}</AvaliacaoTexto>
+          </SectionCard>
 
-          <Heading4 style={{ marginTop: "30px" }}>🎯 Avaliação</Heading4>
-          <Paragraph>{plano?.avaliacao}</Paragraph>
 
-          <Heading4 style={{ marginTop: "30px" }}>📚 Aulas Planejadas</Heading4>
-          <table style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            marginTop: "10px"
-          }}>
-            <thead>
-              <tr style={{ background: "#eee" }}>
-                <th style={{ padding: "8px", border: "1px solid #ccc" }}>#</th>
-                <th style={{ padding: "8px", border: "1px solid #ccc" }}>Título</th>
-                <th style={{ padding: "8px", border: "1px solid #ccc" }}>Objetivo</th>
-                <th style={{ padding: "8px", border: "1px solid #ccc" }}>Duração</th>
-              </tr>
-            </thead>
-            <tbody>
-              {plano?.aulas
-                .sort((a, b) => a.numero_aula - b.numero_aula)
-                .map((aula) => (
-                  <tr key={aula.id}>
-                    <td style={{ padding: "8px", border: "1px solid #ccc" }}>{aula.numero_aula}</td>
-                    <td style={{ padding: "8px", border: "1px solid #ccc" }}>{aula.titulo}</td>
-                    <td style={{ padding: "8px", border: "1px solid #ccc" }}>{aula.objetivo}</td>
-                    <td style={{ padding: "8px", border: "1px solid #ccc" }}>{aula.duracao}</td>
-                  </tr>
+          <SectionCard>
+            <Heading4 style={{ color: "#0078D4" }}>📚 Aulas Planejadas</Heading4>
+            <StyledTable>
+              <TableHead>
+                <TableRow>
+                  <th>#</th>
+                  <th>Título</th>
+                  <th>Objetivo</th>
+                  <th>Duração</th>
+                </TableRow>
+              </TableHead>
+              <tbody>
+                {plano?.aulas.map((aula) => (
+                  <TableRow key={aula.id}>
+                    <TableCell>{aula.numero_aula}</TableCell>
+                    <TableCell>{aula.titulo}</TableCell>
+                    <TableCell>{aula.objetivo}</TableCell>
+                    <TableCell>{aula.duracao}</TableCell>
+                  </TableRow>
                 ))}
-            </tbody>
-          </table>
+              </tbody>
+            </StyledTable>
+          </SectionCard>
+
           {plano?.aulas && plano.aulas.length > 0 && (
             <>
-              <Heading4 style={{ marginTop: "30px" }}>🧩 Atividades por Aula</Heading4>
+              <Heading4 style={{ marginTop: "30px", color: "#0078D4" }}>🧩 Atividades por Aula</Heading4>
               <div style={{ display: "flex", flexDirection: "column", gap: "30px", marginTop: "10px" }}>
                 {plano.aulas.map((aula) => (
-                  <div key={aula.id} style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "8px",
-                    padding: "15px",
-                    backgroundColor: "#fdfdfd",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
-                  }}>
-                    <Paragraph style={{ fontWeight: "bold", fontSize: "16px", marginBottom: "10px" }}>
+                  <AulaCard key={aula.id}>
+                    <AulaTitle>
                       Aula {aula.numero_aula}: {aula.titulo}
-                    </Paragraph>
-
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    </AulaTitle>
+                    <AtividadesTable>
                       <thead>
-                        <tr style={{ backgroundColor: "#f0f0f0" }}>
-                          <th style={{ padding: "8px", border: "1px solid #ccc" }}>Etapa</th>
-                          <th style={{ padding: "8px", border: "1px solid #ccc" }}>Tempo</th>
-                          <th style={{ padding: "8px", border: "1px solid #ccc" }}>Descrição</th>
+                        <tr>
+                          <th>Etapa</th>
+                          <th>Tempo</th>
+                          <th>Descrição</th>
                         </tr>
                       </thead>
                       <tbody>
                         {aula.atividades?.map((atividade, idx) => (
                           <tr key={atividade.id || idx}>
-                            <td style={{ padding: "8px", border: "1px solid #ccc", backgroundColor: "#fff" }}>
-                              {atividade.etapa}
-                            </td>
-                            <td style={{ padding: "8px", border: "1px solid #ccc", backgroundColor: "#fff" }}>
-                              {atividade.tempo}
-                            </td>
-                            <td style={{ padding: "8px", border: "1px solid #ccc", backgroundColor: "#fff" }}>
-                              {atividade.descricao}
-                            </td>
+                            <td>{atividade.etapa}</td>
+                            <td>{atividade.tempo}</td>
+                            <td>{atividade.descricao}</td>
                           </tr>
                         ))}
                       </tbody>
-                    </table>
-                  </div>
+                    </AtividadesTable>
+                  </AulaCard>
                 ))}
               </div>
             </>
           )}
-        </PlanoContent>
-      </main>
-    </MainWrapper>
+        </PageWrapper>
+      </MainWrapper>
     </>
   );
 };

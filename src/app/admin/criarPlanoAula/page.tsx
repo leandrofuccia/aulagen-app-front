@@ -10,8 +10,10 @@ import {
   StyledForm,
   MainWrapper,
   Heading5,
+  Select,
 } from "@/components/Common";
 import Sidebar from "@/components/Sidebar";
+import { FormGroup, FormRow, Label, MultiSelect, PageTitle } from "@/styles/criarPlanoStyles";
 
 interface HabilidadeBNCC {
   id: number;
@@ -125,78 +127,72 @@ const CreatePlanoAulaPage = () => {
         ]}
     /> }
     <MainWrapper>
-      <Header onLogout={() => router.push("/login")} onBack={() => router.back()} />
-      <main>
-        <Heading5>📚 Criar Plano de Aula</Heading5>
+        <Header onLogout={() => router.push("/login")} onBack={() => router.back()} />        
+        <main>
+          <PageTitle>📚 Criar Plano de Aula</PageTitle>
 
-        <StyledForm onSubmit={handleSubmit}>
-          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-            <div style={{ flex: 1 }}>
-              <label htmlFor="ano">Ano/Série:</label>
-              <select
-                id="ano"
-                value={anoSelecionado}
-                onChange={(e) => {
-                  setAnoSelecionado(e.target.value);
-                  setComponenteSelecionado("");
-                }}
-                style={{ width: "100%", padding: "8px" }}
-              >
-                <option value="">Selecione</option>
-                {anosDisponiveis.map((ano) => (
-                  <option key={ano} value={ano}>{ano}</option>
+          <StyledForm onSubmit={handleSubmit}>
+            <FormRow>
+              <FormGroup>
+                <Label htmlFor="ano">Ano/Série:</Label>
+                <Select
+                  id="ano"
+                  value={anoSelecionado}
+                  onChange={(e) => {
+                    setAnoSelecionado(e.target.value);
+                    setComponenteSelecionado("");
+                  }}
+                >
+                  <option value="">Selecione</option>
+                  {anosDisponiveis.map((ano) => (
+                    <option key={ano} value={ano}>{ano}</option>
+                  ))}
+                </Select>
+              </FormGroup>
+
+              <FormGroup>
+                <Label htmlFor="componente">Componente Curricular:</Label>
+                <Select
+                  id="componente"
+                  value={componenteSelecionado}
+                  onChange={(e) => setComponenteSelecionado(e.target.value)}
+                >
+                  <option value="">Selecione</option>
+                  {componentesFiltrados.map((comp) => (
+                    <option key={comp} value={comp}>{comp}</option>
+                  ))}
+                </Select>
+              </FormGroup>
+
+              <FormGroup>
+                <Label htmlFor="filtro">🔍 Filtro BNCC:</Label>
+                <Input
+                  id="filtro"
+                  type="text"
+                  value={filtroDescricao}
+                  onChange={(e) => setFiltroDescricao(e.target.value)}
+                  placeholder="Digite um termo..."
+                />
+              </FormGroup>
+            </FormRow>
+
+            <FormGroup style={{ marginTop: "24px" }}>
+              <Label htmlFor="descricao">Descrição (Habilidades BNCC):</Label>
+              <MultiSelect id="descricao" multiple>
+                {descricoesFiltradas.map((item) => (
+                  <option key={item.codigo}>
+                    {item.codigo} - {item.descricao}
+                  </option>
                 ))}
-              </select>
-            </div>
+              </MultiSelect>
+            </FormGroup>
 
-            <div style={{ flex: 1 }}>
-              <label htmlFor="componente">Componente Curricular:</label>
-              <select
-                id="componente"
-                value={componenteSelecionado}
-                onChange={(e) => setComponenteSelecionado(e.target.value)}
-                style={{ width: "100%", padding: "8px" }}
-              >
-                <option value="">Selecione</option>
-                {componentesFiltrados.map((comp) => (
-                  <option key={comp} value={comp}>{comp}</option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <label htmlFor="filtro">🔍 Filtro BNCC:</label>
-              <Input
-                id="filtro"
-                type="text"
-                value={filtroDescricao}
-                onChange={(e) => setFiltroDescricao(e.target.value)}
-                placeholder="Digite um termo..."
-              />
-            </div>
-          </div>
-
-          <div style={{ marginTop: "20px" }}>
-            <label htmlFor="descricao">Descrição (Habilidades BNCC):</label>
-            <select
-              id="descricao"
-              multiple
-              style={{ width: "100%", height: "120px", padding: "8px" }}
-            >
-              {descricoesFiltradas.map((item) => (
-                <option key={item.codigo}>
-                  {item.codigo} - {item.descricao}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <Button type="submit" style={{ marginTop: "20px" }}>
-            GERAR PLANO DE AULA
-          </Button>
-        </StyledForm>
-      </main>
-    </MainWrapper>
+            <Button type="submit" style={{ marginTop: "24px" }}>
+              GERAR PLANO DE AULA
+            </Button>
+          </StyledForm>
+        </main>
+      </MainWrapper>
     </>
   );
 };

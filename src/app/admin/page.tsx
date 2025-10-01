@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
+import IconButton from "@/components/IconButton";
+import Loading from "@/components/Loading";
 import {
   Heading4,
   PlanoItemFlex,
@@ -16,11 +19,13 @@ import {
   ErrorPopup,
   WarningPopup,
   SearchBar,
+  PaginationButton,
+  PaginationWrapper,
+  SecondaryButton,
+  PrimaryButton,
+  PaginationLink,
 } from "@/components/Common";
-import Loading from "@/components/Loading";
-import IconButton from "@/components/IconButton";
 import { IPlanoAula } from "@/types/planoAula";
-import Sidebar from "@/components/Sidebar";
 
 const AdminPage = () => {
   const [userProfile, setUserProfile] = useState<number | null>(null);
@@ -52,8 +57,7 @@ const AdminPage = () => {
           setWarningMessage("Acesso restrito. Apenas professores podem acessar essa página.");
         }
       } catch (error: any) {
-        const message =
-          error?.response?.data?.message || "Erro ao verificar ocupação.";
+        const message = error?.response?.data?.message || "Erro ao verificar ocupação.";
         setErrorMessage(message);
         router.push("/login");
       }
@@ -80,8 +84,7 @@ const AdminPage = () => {
 
         setPlanoAula(normalized);
       } catch (error: any) {
-        const message =
-          error?.response?.data?.message || "Erro ao buscar planos de aula.";
+        const message = error?.response?.data?.message || "Erro ao buscar planos de aula.";
         setErrorMessage(message);
       } finally {
         setIsLoading(false);
@@ -110,8 +113,7 @@ const AdminPage = () => {
       setSuccessMessage("Plano de Aula excluído com sucesso!");
       setPlanoAula((prev) => prev.filter((p) => p.id !== planoId));
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message || "Erro ao excluir plano de aula.";
+      const message = error?.response?.data?.message || "Erro ao excluir plano de aula.";
       setErrorMessage(message);
     }
   };
@@ -154,149 +156,106 @@ const AdminPage = () => {
 
   return (
     <>
-    { <Sidebar
-      links={[
-        { label: "Administração", href: "/admin" },
-      ]}
-    /> }
-    <MainWrapper>
-      <Header onLogout={handleLogout} />
-      <SearchBar
-        type="text"
-        placeholder="Buscar plano de aula por título ou código BNCC..."
-        value={searchQuery}
-        onChange={handleSearch}
-      />
+      <Sidebar links={[{ label: "Administração", href: "/admin" }]} />
+      <MainWrapper>
+        <Header onLogout={handleLogout} />
+        <SearchBar
+          type="text"
+          placeholder="Buscar plano de aula por título ou código BNCC..."
+          value={searchQuery}
+          onChange={handleSearch}
+        />
 
-      <ResponsiveContainer>
-        <HeaderActions>
-          <Heading4>Administração de Planos de Aula</Heading4>
+        <ResponsiveContainer>
+          <HeaderActions>
+            <Heading4>Administração de Planos de Aula</Heading4>
 
-          {successMessage && (
-            <SuccessPopup>
-              {successMessage}
-              <button onClick={() => setSuccessMessage(null)}>✖</button>
-            </SuccessPopup>
-          )}
-          {errorMessage && (
-            <ErrorPopup>
-              {errorMessage}
-              <button onClick={() => setErrorMessage(null)}>✖</button>
-            </ErrorPopup>
-          )}
-          {warningMessage && (
-            <WarningPopup>
-              {warningMessage}
-              <button onClick={() => setWarningMessage(null)}>✖</button>
-            </WarningPopup>
-          )}
+            {successMessage && (
+              <SuccessPopup>
+                {successMessage}
+                <button onClick={() => setSuccessMessage(null)}>✖</button>
+              </SuccessPopup>
+            )}
+            {errorMessage && (
+              <ErrorPopup>
+                {errorMessage}
+                <button onClick={() => setErrorMessage(null)}>✖</button>
+              </ErrorPopup>
+            )}
+            {warningMessage && (
+              <WarningPopup>
+                {warningMessage}
+                <button onClick={() => setWarningMessage(null)}>✖</button>
+              </WarningPopup>
+            )}
 
-          <IconButton
-            icon="/icons/add.svg"
-            alt=""
-            tooltip=""
-            label="Criar Novo Plano de Aula"
-            onClick={handleCreate}
-            showLabel="side"
-            labelSize="lg"
-          />
-        </HeaderActions>
-      </ResponsiveContainer>
+            <PrimaryButton onClick={() => handleCreate()}>
+              Criar Plano de Aula
+            </PrimaryButton>
+            
+          </HeaderActions>
+        </ResponsiveContainer>
 
-      <main>
-        <PlanoList>
-          {paginatedPlanos.map((plano: any) => (
-            <PlanoItemFlex key={plano.id}>
-              <div>
-                <div>{plano.titulo}</div>
-                {Array.isArray(plano.habilidade_bncc) && plano.habilidade_bncc.length > 0 ? (
-                  plano.habilidade_bncc.map((hab: any, idx: number) => (
-                    <div key={idx} className="mb-2 border-b pb-2">
-                      <p><strong>Código:</strong> {hab.codigo}</p>
-                      <p><strong>Ano/Série:</strong> {hab.anoSerie}</p>
-                      <p><strong>Componente:</strong> {hab.componenteCurricular}</p>
-                      <p><strong>Etapa:</strong> {hab.etapaEnsino}</p>
-                    </div>
-                  ))
-                ) : (
-                  <div><em>Sem habilidades registradas</em></div>
-                )}
-              </div>
+        <main>
+          <PlanoList>
+            {paginatedPlanos.map((plano: any) => (
+              <PlanoItemFlex key={plano.id}>
+                <div>
+                  <div>{plano.titulo}</div>
+                  {Array.isArray(plano.habilidade_bncc) && plano.habilidade_bncc.length > 0 ? (
+                    plano.habilidade_bncc.map((hab: any, idx: number) => (
+                      <div key={idx} style={{ marginBottom: "8px" }}>
+                        <p><strong>Código:</strong> {hab.codigo}</p>
+                        <p><strong>Ano/Série:</strong> {hab.anoSerie}</p>
+                        <p><strong>Componente:</strong> {hab.componenteCurricular}</p>
+                        <p><strong>Etapa:</strong> {hab.etapaEnsino}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <div><em>Sem habilidades registradas</em></div>
+                  )}
+                </div>
 
-              <ButtonGroup>
-                <IconButton
-                  icon="/icons/plano.png"
-                  alt=""
-                  tooltip="Visualizar Plano"
-                  label="Visualizar Plano"
-                  onClick={() => handleDetalhePlano(plano.id)}
-                />
-                <IconButton
-                  icon="/icons/edit.svg"
-                  alt=""
-                  tooltip="Editar"
-                  label="Editar"
-                  onClick={() => handleEdit(plano.id)}
-                />
-                <IconButton
-                  icon="/icons/delete.png"
-                  alt=""
-                  tooltip="Excluir"
-                  label="Excluir"
-                  onClick={() => handleDelete(plano.id)}
-                />
-              </ButtonGroup>
-            </PlanoItemFlex>
-          ))}
-        </PlanoList>
+                <ButtonGroup>
+                  <PrimaryButton onClick={() => handleDetalhePlano(plano.id)}>
+                    Visualizar
+                  </PrimaryButton>
 
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "30px",
-          gap: "12px"
-        }}>
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            style={{
-              padding: "8px 16px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              backgroundColor: currentPage === 1 ? "#eee" : "#007bff",
-              color: currentPage === 1 ? "#999" : "#fff",
-              cursor: currentPage === 1 ? "not-allowed" : "pointer",
-              fontWeight: "bold",
-              transition: "background-color 0.3s"
-            }}
-          >
-            ◀ Página anterior
-          </button>
+                  <PrimaryButton onClick={() => handleEdit(plano.id)}>
+                    Editar
+                  </PrimaryButton>
 
-          <span style={{ fontWeight: "bold", fontSize: "16px" }}>
-            Página {currentPage} de {totalPages}
-          </span>
+                  <SecondaryButton onClick={() => handleDelete(plano.id)}>
+                    Deletar
+                  </SecondaryButton>
+                 
+                </ButtonGroup>
+              </PlanoItemFlex>
+            ))}
+          </PlanoList>
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            style={{
-              padding: "8px 16px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              backgroundColor: currentPage === totalPages ? "#eee" : "#007bff",
-              color: currentPage === totalPages ? "#999" : "#fff",
-              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-              fontWeight: "bold",
-              transition: "background-color 0.3s"
-            }}
-          >
-            Próxima página ▶
-          </button>
-        </div>
-      </main>
-    </MainWrapper>
+          <PaginationWrapper>
+            <PaginationLink
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              ◀ Página anterior
+            </PaginationLink>
+
+            <span style={{ fontWeight: "bold", fontSize: "16px" }}>
+              Página {currentPage} de {totalPages}
+            </span>
+
+            <PaginationLink
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Próxima página ▶
+            </PaginationLink>
+          </PaginationWrapper>
+
+        </main>
+      </MainWrapper>
     </>
   );
 };

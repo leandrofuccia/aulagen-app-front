@@ -34,7 +34,7 @@ export default function RootLayout({
 */
 
 
-"use client";
+/*"use client";
 
 import { ThemeContextProvider } from "@/context/ThemeContext";
 import { GlobalStyle } from "@/styles/globals";
@@ -55,4 +55,26 @@ export default function RootLayout({
     </html>
   );
 }
+*/
 
+
+// src/app/layout.tsx
+import React from "react";
+import ThemeWrapper from "@/components/ThemeWrapper";
+
+export const metadata = {
+  title: "AulaGen",
+  description: "Plataforma de planos de aula",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="pt">
+      <body>
+        <ThemeWrapper>
+          {children}
+        </ThemeWrapper>
+      </body>
+    </html>
+  );
+}
