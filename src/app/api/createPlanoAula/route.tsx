@@ -11,8 +11,9 @@ export async function POST(req: Request) {
 
     const token = rawToken.replace("Bearer ", "");
     const body = await req.json();
-
-    const { codigo_BNCC, componente_Curricular, serie, duracao_aula } = body;
+    console.log("Payload recebido:", body);
+    
+    const { codigo_BNCC, componente_Curricular, serie, duracao_aula, credencialId } = body;
 
     if (!codigo_BNCC || !componente_Curricular || !serie || !duracao_aula) {
       return NextResponse.json(
@@ -20,6 +21,9 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+
+    console.log('createPlano credencialId', credencialId)
 
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/planoAula/gerar`;
 
@@ -30,6 +34,7 @@ export async function POST(req: Request) {
         componente_Curricular,
         serie,
         duracao_aula,
+        credencialId: credencialId,
       },
       {
         headers: {

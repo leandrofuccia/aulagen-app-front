@@ -59,15 +59,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout, onBack}) => {
   return (
     <HeaderContainer>
       <div className="header-left">
-        {onBack && (
-          <IconButton
-            icon="/icons/back.svg"
-            alt="Voltar"
-            tooltip="Voltar"
-            label="Voltar"
-            onClick={onBack}
-          />
-        )}
+        
         <Logo src="/icons/logo-aulagen.png" alt="Logo AulaGen" />
 
       </div>

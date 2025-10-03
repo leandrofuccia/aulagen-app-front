@@ -199,7 +199,7 @@ const LoginPage = () => {
       <Logo src="/icons/logo-aulagen.png" alt="Logo AulaGen" />
       <Card>
         <Header>
-          <Image src="/icons/login.svg" alt="Login Icon" width={36} height={36} />
+          <Image src="/icons/login.png" alt="Login Icon" width={36} height={36} />
           <h1>Login</h1>
         </Header>
 

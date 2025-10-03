@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import { useState } from 'react';
 import { ErrorPopup, SuccessPopup } from '@/components/Common';
-import { Button, Card, Header, RegisterLink, StyledErrorMessage, StyledField, StyledSelect, Wrapper,  } from '@/components/LoginComp';
+import { Button, Card, Header, Logo, RegisterLink, StyledErrorMessage, StyledField, StyledSelect, Wrapper,  } from '@/components/LoginComp';
 import Image from 'next/image';
 
 const RegisterPage = () => {
@@ -21,7 +21,7 @@ const RegisterPage = () => {
     nome: Yup.string().required('Nome é obrigatório'),
     password: Yup.string().min(4, 'Mínimo de 4 caracteres').required('Senha é obrigatória'),
     email: Yup.string().email('Email inválido').required('Email é obrigatório'),
-    ocupacaoid: Yup.number().moreThan(0, 'ocupacao é obrigatório').required('ocupacao é obrigatório'),
+    //ocupacaoid: Yup.number().moreThan(0, 'ocupacao é obrigatório').required('ocupacao é obrigatório'),
   });
 
   const handleSubmit = async (
@@ -29,7 +29,7 @@ const RegisterPage = () => {
       nome: string;
       password: string;
       email: string;
-      ocupacaoid: number;
+      //ocupacaoid: number;
     },
     { setSubmitting }: any
   ) => {
@@ -60,7 +60,7 @@ const RegisterPage = () => {
         '/api/createUsuario',
         {
           nome: values.nome,
-          ocupacaoid: values.ocupacaoid,
+          ocupacaoid: 2,
           credencialId,
         },
         {
@@ -93,9 +93,10 @@ const RegisterPage = () => {
 
   return (
     <Wrapper>
+      <Logo src="/icons/logo-aulagen.png" alt="Logo AulaGen" />
       <Card>
         <Header>
-          <Image src="/icons/login.svg" alt="Login Icon" width={36} height={36} />
+          <Image src="/icons/login.png" alt="Login Icon" width={36} height={36} />
           <h1>Cadastro</h1>
           {successMessage && (
           <SuccessPopup>
@@ -111,7 +112,7 @@ const RegisterPage = () => {
         )}
         </Header>
       <Formik
-        initialValues={{ nome: '', password: '', email: '', ocupacaoid: 0 }}
+        initialValues={{ nome: '', password: '', email: ''}}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
@@ -140,18 +141,7 @@ const RegisterPage = () => {
                 {emailError && <div>{emailError}</div>}
               </StyledErrorMessage>
 
-              <StyledSelect
-                name="ocupacaoid"
-                as="select"
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setFieldValue('ocupacaoid', parseInt(e.target.value, 10))
-                }
-              >
-                <option value={0}>Selecione o ocupacao</option>
-                <option value={1}>Aluno</option>
-                <option value={2}>Professor</option>
-              </StyledSelect>
-              <StyledErrorMessage><ErrorMessage name="ocupacaoid" /></StyledErrorMessage>
+              
 
               <Button type="submit" disabled={isSubmitting || emailExists}>
                 Cadastrar

@@ -33,6 +33,8 @@ const AdminPage = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+
 
   const [searchQuery, setSearchQuery] = useState("");
   const [planoAula, setPlanoAula] = useState<IPlanoAula[]>([]);
@@ -104,7 +106,7 @@ const AdminPage = () => {
     setCurrentPage(newPage);
   };
 
-  const handleDelete = async (planoId: number) => {
+  /*const handleDelete = async (planoId: number) => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`/api/deletePlanoAula/${planoId}`, {
@@ -116,7 +118,32 @@ const AdminPage = () => {
       const message = error?.response?.data?.message || "Erro ao excluir plano de aula.";
       setErrorMessage(message);
     }
+  };*/
+
+  const handleDelete = async (planoId: number) => {
+    setConfirmDeleteId(planoId); // ativa o popup de confirmação
   };
+
+  const confirmarExclusao = async () => {
+  if (!confirmDeleteId) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/deletePlanoAula/${confirmDeleteId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setSuccessMessage("Plano de Aula excluído com sucesso!");
+      setPlanoAula((prev) => prev.filter((p) => p.id !== confirmDeleteId));
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Erro ao excluir plano de aula.";
+      setErrorMessage(message);
+    } finally {
+      setConfirmDeleteId(null); // fecha o popup
+    }
+  };
+
+
 
   const handleEdit = (planoId: number) => {
     router.push(`/admin/editarPlanoAula/${planoId}`);
@@ -156,7 +183,32 @@ const AdminPage = () => {
 
   return (
     <>
-      <Sidebar links={[{ label: "Administração", href: "/admin" }]} />
+
+    {confirmDeleteId !== null && (
+        <WarningPopup>
+          Tem certeza que deseja excluir este plano de aula?
+          <div>
+            <button onClick={confirmarExclusao}>Confirmar</button>
+            <button onClick={() => setConfirmDeleteId(null)}>Cancelar</button>
+          </div>
+        </WarningPopup>
+      )}
+
+      {successMessage && (
+        <SuccessPopup>
+          {successMessage}
+          <button onClick={() => setSuccessMessage(null)}>✖</button>
+        </SuccessPopup>
+      )}
+
+    {errorMessage && (
+      <ErrorPopup>
+        {errorMessage}
+        <button onClick={() => setErrorMessage(null)}>✖</button>
+      </ErrorPopup>
+    )}
+
+      <Sidebar links={[{ label: "Início", href: "/admin" }]} />
       <MainWrapper>
         <Header onLogout={handleLogout} />
         <SearchBar
