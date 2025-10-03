@@ -433,7 +433,7 @@ import * as Yup from "yup";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Loading from "@/components/Loading";
-import { ErrorPopup, SuccessPopup } from "@/components/Common";
+import { ErrorPopup, MainWrapper, SuccessPopup } from "@/components/Common";
 
 import {
   FormRow,
@@ -517,9 +517,9 @@ const CreatePlanoAulaPage = () => {
         </ErrorPopup>
       )}
 
-      <Sidebar links={[{ label: "Início", href: "/admin" }]} />
+      {/* <Sidebar links={[{ label: "Início", href: "/admin" }]} /> */}
 
-      <main style={{ paddingLeft: 260 }}>
+      <MainWrapper>
         <Header onLogout={() => router.push("/login")} onBack={() => router.back()} />
 
         <section style={{ padding: "32px", maxWidth: 1100, margin: "0 auto" }}>
@@ -712,7 +712,7 @@ const CreatePlanoAulaPage = () => {
             }}
           </Formik>
         </section>
-      </main>
+      </MainWrapper>
     </>
   );
 };

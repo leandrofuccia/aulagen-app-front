@@ -241,7 +241,7 @@ import { Heading2, Heading3, Heading4, Heading5, Paragraph } from "./Typography"
 
 // Container principal
 export const Container = styled.div`
-  margin-left: 200px;
+  margin-left: 5px;
   padding: 20px;
   background-color: ${(props) => props.theme.colors.background};
   color: ${(props) => props.theme.colors.text};
@@ -408,10 +408,10 @@ export const ParagraphStyled = styled(Paragraph)`
   font-size: ${(props) => props.theme.fontSizes.p};
 `;
 
-export { Heading2, Heading3, Heading4, Heading5, Paragraph, ButtonGroup };
+export { Heading2, Heading3, Heading4, Heading5, Paragraph, ButtonGroup, ButtonGroupLeft };
 
 export const MainWrapper = styled.div`
-  margin-left: 250px;
+  margin-left: 5px;
   padding: 16px;
   background-color: ${(props) => props.theme.colors.background};
   color: ${(props) => props.theme.colors.text};
@@ -476,6 +476,12 @@ const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
+`;
+
+const ButtonGroupLeft = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: left;
 `;
 
 export const PaginationButton = styled.button<{ disabled?: boolean }>`

@@ -108,7 +108,7 @@ const ReadPlanoAulaPage = () => {
 
   return (
     <>
-      <Sidebar links={[{ label: "Início", href: "/admin" }]} />
+      {/* <Sidebar links={[{ label: "Início", href: "/admin" }]} /> */}
       <MainWrapper>
         <Header onLogout={handleLogout} onBack={() => router.back()} />
         <PageWrapper>
