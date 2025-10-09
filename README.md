@@ -1,4 +1,4 @@
-# Documentação do Hackton - Fase 5
+# Documentação do Hackaton - Fase 5
 
 Atualmente, a maioria dos professores e professoras da rede pública enfrenta grandes desafios para planejar e compartilhar suas aulas de forma prática, centralizada e tecnológica. Para enfrentar essa realidade, desenvolvemos a AulaGen, uma plataforma inteligente que facilita a criação, edição e gestão de planos de aula alinhados à BNCC, integrando recursos modernos e o poder da inteligência artificial.
 
@@ -175,7 +175,7 @@ Este guia tem como objetivo orientar o uso do sistema AulaGen, disponível após
    - Um botão para **editar** um plano de aula específico.
    - Um botão para **excluir** um plano de aula específico.
 
-### **3. Página de Criação de um plano de aula**
+### **4. Página de Criação de um plano de aula**
 **Objetivo:** Permitir que docentes criem o plano de aula.  
 #### **Passos do Usuário:**  
 1. Após login, o professor acessa a página **Administração de Postagens**.
@@ -188,10 +188,10 @@ Este guia tem como objetivo orientar o uso do sistema AulaGen, disponível após
 5. Se o plano aula for criado com sucesso, o sistema exibe uma mensagem de confirmação.
 6. O sistema redireciona automaticamente para a página **Página de Leitura do plano de aula**.
 
-### **4. Página de Leitura do plano de aula**
+### **5. Página de Leitura do plano de aula**
 **Objetivo:** Exibir o conteúdo completo de um plano de aula.
 #### **Passos do Usuário:**  
-1. Selecionar um plano de "Clique no botão visualizar" **Administração de Planos de Aula**.
+1. Clica no botão "Visualizar" do plano desejado na página **Administração de Planos de Aula**.
 2. A página do plano de aula carregará:
    - Título
    - Duração Total
@@ -203,22 +203,8 @@ Este guia tem como objetivo orientar o uso do sistema AulaGen, disponível após
    - Detalhes do Plano
    - Avaliação
    - Aulas Planejadas
-    - Atividades por Aula
+   - Atividades por Aula
 3. Clica em Início para retornar à **Administração de Planos de Aula**.
-
-### **5. Página de Criação de um plano de aula**
-**Objetivo:** Permitir que docentes criem o plano de aula.  
-#### **Passos do Usuário:**  
-1. Após login, o professor acessa a página **Administração de Planos de Aula**.
-2. Clica em "Criar Plano de aula".
-3. Seleciona no formulário:
-   - **Ano/Série**
-   - **Componente Curricular**
-   - **Descrição (Habilidades BNCC):**
-4. Clica no botão **Gerar Plano Aula**
-5. Se o plano aula for criado com sucesso, o sistema exibe uma mensagem de confirmação.
-6. O sistema redireciona automaticamente para a página **Página de Leitura do plano de aula**.
-
 
 ### **6. Página de Edição de um plano de aula**
 **Objetivo:** Permitir que docentes editem o plano de aula específico.  
@@ -227,7 +213,7 @@ Este guia tem como objetivo orientar o uso do sistema AulaGen, disponível após
 2. Clica em "Editar" de um plano de aula específico.
 3. Edita no formulário:
    - **Editar Recursos Gerais** incluir/excluir
-   - **Editar Detalhes do Plano** editor markdow
+   - **Editar Detalhes do Plano** editor Markdown
    - **Editar Avaliação**
    - **Editar Aulas Planejadas** 
     - Título
@@ -235,25 +221,17 @@ Este guia tem como objetivo orientar o uso do sistema AulaGen, disponível após
    - **Atividades** 
     - Etapa
     - Descrição
-4. Clica no botão **Salvar Aulterações**.
-5. Se o plano aula for autalizado com sucesso, o sistema exibe uma mensagem de confirmação.
+4. Clica no botão **Salvar Alterações**.
+5. Se o plano aula for atualizado com sucesso, o sistema exibe uma mensagem de confirmação.
 6. O sistema redireciona automaticamente para a página **Página de Leitura do plano de aula**.
 
-3. Caso deseje excluir um plano de aula, clica no respectivo botão **Excluir**.
-
-
-### **6. Página Administrativa** (Apenas para professores)
-**Objetivo:** Gerenciar postagens.  
+### **7. Excluir Plano de Aula**
+**Objetivo:** Excluir planos de aula.  
 #### **Passos do Usuário:**  
-1. O professor acessa a página **Administração de Postagens** clicando no menu "Administração".
-2. Visualiza todas as postagens.
-3. Caso deseje editar um post, clica no respectivo botão **Editar**.
-4. Modifica os campos desejados e clica em **Salvar Alterações**.
-5. O sistema atualiza a postagem, exibe uma mensagem de sucesso e retorna automaticamente para a página **Administração de Postagens**.
+1. Caso deseje excluir um plano de aula, clica no seu respectivo botão **Deletar**.
+2. O sistema remove a postagem e exibe uma mensagem de sucesso após confirmação do usuário.
 
-7. O sistema remove a postagem e exibe uma mensagem de sucesso.
-
-### **7. Logout**
+### **8. Logout**
 **Objetivo:** Encerrar a sessão do usuário.  
 #### **Passos do Usuário:**  
 1. Em qualquer página, o usuário pode clicar em **Logout**.
