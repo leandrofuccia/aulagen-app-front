@@ -9,11 +9,10 @@ export async function GET(req: Request) {
 
     const page = url.searchParams.get("page") || 1;
     const limit = url.searchParams.get("limit") || 10;
-    const id = url.pathname.split("/").pop(); // Extrai o ID da URL
+    const id = url.pathname.split("/").pop();
 
     console.log('usuario id aaaaa', id)
-
-    // Recupera o token de autenticação (pode ser do localStorage ou outro local)
+   
     const token = req.headers.get("authorization");
 
     if (!token) {
@@ -21,16 +20,13 @@ export async function GET(req: Request) {
     }
    console.log('apiUrl+`${id}` ', apiUrl+`${id}`)
 
-    // Faz a chamada ao back-end com o token no cabeçalho
     const response = await axios.get(apiUrl+`${id}`, {
       params: { page, limit },
       headers: {
-        Authorization: token, // Inclui o token no cabeçalho
+        Authorization: token, 
       },
     });
-
-    console.log('response aaaaa', response.data)
-    // Retorna os planos de para o front-end
+   
     return NextResponse.json(response.data, { status: 200 });
   } catch (error: any) {
     console.error("Erro ao buscar planos de aula:", error);

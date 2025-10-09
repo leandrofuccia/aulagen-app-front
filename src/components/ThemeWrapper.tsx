@@ -1,4 +1,3 @@
-// src/components/ThemeWrapper.tsx
 "use client";
 
 import React from "react";

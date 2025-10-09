@@ -164,11 +164,11 @@ Este guia tem como objetivo orientar o uso do sistema AulaGen, disponível após
 5. Após o sucesso, o usuário é redirecionado para a **Página de Login** para autenticação.
 
 ### **3. Administração de Planos de Aula (Página Principal)**
-**Objetivo:** Exibir a lista de todos os planos de aulas do usuário logado.  
+**Objetivo:** Exibir a lista de todos os planos de aula do usuário logado.  
 #### **Passos do Usuário:**  
 1. Após o login, o usuário acessa a **Administração de Planos de Aula**.
 2. A página exibe:
-   - Lista de todos os planos de aulas do usuário logado com título, código, ano/série, componente e etapa.
+   - Lista de todos os planos de aula do usuário logado com título, código, ano/série, componente e etapa.
    - Um botão para **criar** um plano de aula.
    - Um campo de **busca** para filtrar o plano de aula por palavras-chave (título).
    - Um botão para **visualizar** um plano de aula específico.

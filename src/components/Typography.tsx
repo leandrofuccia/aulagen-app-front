@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-// Títulos principais (h1, h2, h3)
 export const Heading1 = styled.h1`
   font-size: ${(props) => props.theme.fontSizes.h2};
   margin-bottom: ${(props) => props.theme.spacing.lg};
@@ -38,7 +37,6 @@ export const Heading5 = styled.h2`
  text-align: center;
 `;
 
-// Parágrafos (texto normal)
 export const Paragraph = styled.p`
   display: flex;
   gap: 16px; 
@@ -50,7 +48,6 @@ export const Paragraph = styled.p`
   }
 `;
 
-// Pode ser usado para títulos no Header e Sidebar
 export const Title = styled.h1`
   font-size: ${(props) => props.theme.fontSizes.h2};
   margin-bottom: ${(props) => props.theme.spacing.md};

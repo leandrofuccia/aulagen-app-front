@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Page = styled.div`
   height: 100vh;
-  background-image: url("/icons/background.jpg"); /* ou qualquer imagem de fundo */
+  background-image: url("/icons/background.jpg");
   background-size: cover;
   background-position: center;
   position: relative;
@@ -18,7 +18,7 @@ const Content = styled.div`
 const Overlay = styled.div`
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4); /* fundo escuro translúcido */
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;

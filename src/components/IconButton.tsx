@@ -72,7 +72,7 @@ type IconButtonProps = {
   tooltip?: string;
   onClick: () => void;
   showLabel?: LabelPosition;
-  labelSize?: FontSizeToken; // "sm" | "md" | "lg" etc.
+  labelSize?: FontSizeToken; 
 };
 
 const IconButton: React.FC<IconButtonProps> = ({

@@ -1,615 +1,3 @@
-/*"use client";
-
-import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
-import SimpleMDE from "react-simplemde-editor";
-import "simplemde/dist/simplemde.min.css";
-
-import Header from "@/components/Header";
-import {
-  ErrorPopup,
-  Heading3,
-  Heading4,
-  MainWrapper,
-  Paragraph,
-  PlanoContent,
-  Button,
-  Input,
-} from "@/components/Common";
-import Loading from "@/components/Loading";
-import { IPlanoAulaDetalhado } from "@/types/planoAulaDetalhado";
-import Sidebar from "@/components/Sidebar";
-
-const EditPlanoAulaPage = () => {
-  const [plano, setPlano] = useState<IPlanoAulaDetalhado | null>(null);
-  const [detalhesPlano, setDetalhesPlano] = useState("");
-  const [recursosGerais, setRecursosGerais] = useState<string[]>([]);
-  const [avaliacao, setAvaliacao] = useState("");
-  const [aulas, setAulas] = useState<any[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const params = useParams();
-  const router = useRouter();
-
-  const mdeOptions = useMemo(() => ({
-    spellChecker: false,
-    placeholder: "Edite os detalhes do plano aqui...",
-    status: false,
-  }), []);
-
-
-  useEffect(() => {
-    const fetchPlanoAula = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`/api/detalhePlanoAula/${params.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const planoData = response.data.planos;
-        setPlano(planoData);
-        setDetalhesPlano(planoData.detalhes_plano_completo || "");
-        setRecursosGerais(planoData.recursos_gerais || []);
-        setAvaliacao(planoData.avaliacao || "");
-        setAulas(planoData.aulas || []);
-        setIsLoading(false);
-      } catch (error: any) {
-        const message = error?.response?.data?.message || "Erro ao buscar plano de aula.";
-        setErrorMessage(message);
-        setIsLoading(false);
-      }
-    };
-
-    fetchPlanoAula();
-  }, [params.id]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  };
-
-  const handleSalvar = async () => {
-    try {
-      setIsSaving(true);
-      const token = localStorage.getItem("token");
-
-      const markdownLimpo = detalhesPlano.replace(/\r\n/g, "\n");
-
-      await axios.put(`/api/editarPlanoAula/${params.id}`, {
-        detalhes_plano_completo: markdownLimpo,
-        recursos_gerais: recursosGerais,
-        avaliacao,
-        aulas,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      alert("Plano de aula atualizado com sucesso!");
-      router.push(`/detalhePlanoAula/${params.id}`);
-    } catch (error) {
-      console.error("Erro ao salvar plano:", error);
-      alert("Erro ao salvar plano de aula.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleRecursoChange = (index: number, value: string) => {
-    const novos = [...recursosGerais];
-    novos[index] = value;
-    setRecursosGerais(novos);
-  };
-
-  const handleRemoveRecurso = (index: number) => {
-    const novos = recursosGerais.filter((_, i) => i !== index);
-    setRecursosGerais(novos);
-  };
-
-  const handleAddRecurso = () => {
-    setRecursosGerais([...recursosGerais, ""]);
-  };
-
-  const handleAulaChange = (index: number, field: string, value: string) => {
-    const novasAulas = [...aulas];
-    novasAulas[index] = { ...novasAulas[index], [field]: value };
-    setAulas(novasAulas);
-  };
-
-  const handleAtividadeChange = (aulaIndex: number, atividadeIndex: number, field: string, value: string) => {
-    const novasAulas = [...aulas];
-    const atividades = [...novasAulas[aulaIndex].atividades];
-    atividades[atividadeIndex] = { ...atividades[atividadeIndex], [field]: value };
-    novasAulas[aulaIndex].atividades = atividades;
-    setAulas(novasAulas);
-  };
-
-  if (isLoading) return <Loading />;
-  if (errorMessage)
-    return (
-      <ErrorPopup>
-        {errorMessage}
-        <button onClick={() => setErrorMessage(null)}>✖</button>
-      </ErrorPopup>
-    );
-
-  return (
-    <>
-    { <Sidebar
-      links={[
-        { label: "Administração", href: "/admin" },
-      ]}
-    /> }
-    <MainWrapper>
-      <Header onLogout={handleLogout} onBack={() => router.back()} />
-      <main style={{ padding: "30px", maxWidth: "1000px", margin: "auto" }}>
-        <PlanoContent>
-          <Heading3>✏️ Editar Plano: {plano?.titulo}</Heading3>
-          <Paragraph><strong>Duração Total:</strong> {plano?.duracao_total}</Paragraph>
-          {plano?.habilidade_bncc ? (
-            <>
-              <Paragraph><strong>Componente Curricular:</strong> {plano.habilidade_bncc.componenteCurricular}</Paragraph>
-              <Paragraph><strong>Ano/Série:</strong> {plano.habilidade_bncc.anoSerie}</Paragraph>
-              <Paragraph><strong>Código BNCC:</strong> {plano.habilidade_bncc.codigo}</Paragraph>
-              <Paragraph><strong>Habilidade BNCC:</strong> {plano.habilidade_bncc.descricao}</Paragraph>
-            </>
-          ) : (
-            <Paragraph style={{ color: "#888" }}>
-              <strong>Habilidade BNCC:</strong> Não vinculada a este plano.
-            </Paragraph>
-          )}
-
-          <Heading4 style={{ marginTop: "30px" }}>📦 Editar Recursos Gerais</Heading4>
-          {recursosGerais.map((recurso, index) => (
-            <div key={index} style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-              <Input
-                type="text"
-                value={recurso}
-                onChange={(e) => handleRecursoChange(index, e.target.value)}
-                placeholder={`Recurso ${index + 1}`}
-                style={{ flex: 1 }}
-              />
-              <button onClick={() => handleRemoveRecurso(index)}>❌</button>
-            </div>
-          ))}
-          <Button type="button" onClick={handleAddRecurso} style={{ marginBottom: "20px" }}>
-            ➕ Adicionar Recurso
-          </Button>
-
-          <Heading4>📋 Editar Detalhes do Plano</Heading4>
-          <SimpleMDE
-            value={detalhesPlano}
-            onChange={setDetalhesPlano}
-            options={mdeOptions}
-          />
-
-          <Heading4 style={{ marginTop: "30px" }}>🎯 Editar Avaliação</Heading4>
-          <textarea
-            value={avaliacao}
-            onChange={(e) => setAvaliacao(e.target.value)}
-            rows={4}
-            style={{ width: "100%", padding: "10px", marginTop: "10px" }}
-          />
-
-          <Heading4 style={{ marginTop: "30px" }}>📚 Editar Aulas Planejadas</Heading4>
-          <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-            {aulas.map((aula, aulaIndex) => (
-              <div key={aula.id} style={{
-                background: "#f9f9f9",
-                padding: "20px",
-                borderRadius: "8px",
-                border: "1px solid #ddd"
-              }}>
-                <Paragraph><strong>Aula {aula.numero_aula}</strong></Paragraph>
-
-                <Paragraph><strong>Título:</strong></Paragraph>
-                <Input
-                  type="text"
-                  value={aula.titulo}
-                  onChange={(e) => handleAulaChange(aulaIndex, "titulo", e.target.value)}
-                  placeholder="Título da aula"
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    borderRadius: "6px",
-                    border: "1px solid #ccc",
-                    marginBottom: "10px"
-                  }}
-                />
-
-                <Paragraph><strong>Objetivo:</strong></Paragraph>
-                <textarea
-                  value={aula.objetivo}
-                  onChange={(e) => handleAulaChange(aulaIndex, "objetivo", e.target.value)}
-                  rows={3}
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    borderRadius: "6px",
-                    border: "1px solid #ccc",
-                    resize: "vertical"
-                  }}
-                />
-
-                {Array.isArray(aula.atividades) && aula.atividades.length > 0 && (
-                  <>
-                    <Heading4 style={{ marginTop: "20px" }}>🧩 Atividades</Heading4>
-                    {aula.atividades.map((atividade: any, atividadeIndex: number) => (
-                      <div key={atividade.id || atividadeIndex} style={{
-                        background: "#fff",
-                        padding: "15px",
-                        borderRadius: "6px",
-                        border: "1px solid #ccc",
-                        marginBottom: "15px"
-                      }}>
-                        <Paragraph><strong>Etapa:</strong></Paragraph>
-                        <Input
-                          type="text"
-                          value={atividade.etapa}
-                          onChange={(e) => handleAtividadeChange(aulaIndex, atividadeIndex, "etapa", e.target.value)}
-                          placeholder="Etapa da atividade"
-                          style={{ width: "100%", marginBottom: "10px" }}
-                        />
-
-                        <Paragraph><strong>Tempo:</strong></Paragraph>
-                        <Input
-                          type="text"
-                          value={atividade.tempo}
-                          onChange={(e) => handleAtividadeChange(aulaIndex, atividadeIndex, "tempo", e.target.value)}
-                          placeholder="Tempo estimado"
-                          style={{ width: "100%", marginBottom: "10px" }}
-                        />
-
-                        <Paragraph><strong>Descrição:</strong></Paragraph>
-                        <textarea
-                          value={atividade.descricao}
-                          onChange={(e) => handleAtividadeChange(aulaIndex, atividadeIndex, "descricao", e.target.value)}
-                          rows={3}
-                          style={{
-                            width: "100%",
-                            padding: "10px",
-                            borderRadius: "6px",
-                            border: "1px solid #ccc",
-                            resize: "vertical"
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <Button
-            type="button"
-            onClick={handleSalvar}
-            style={{ marginTop: "30px" }}
-            disabled={isSaving}
-          >
-            {isSaving ? "Salvando..." : "Salvar Alterações"}
-          </Button>
-        </PlanoContent>
-      </main>
-    </MainWrapper>
-    </>
-  );
-};
-
-export default EditPlanoAulaPage;
-
-*/
-
-
-/*"use client";
-
-import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
-import SimpleMDE from "react-simplemde-editor";
-import "simplemde/dist/simplemde.min.css";
-
-import Header from "@/components/Header";
-import {
-  ErrorPopup,
-  MainWrapper,
-  Paragraph,
-  PlanoContent,  
-} from "@/components/Common";
-import Loading from "@/components/Loading";
-import { IPlanoAulaDetalhado } from "@/types/planoAulaDetalhado";
-import Sidebar from "@/components/Sidebar";
-
-import {
-  Section,
-  Card,
-  Textarea,
-  RecursoRow,
-  AulaCard,
-  AtividadeCard,
-  Input,
-  Button,
-  DeleteButton,
-  Button as BaseButton
-} from "@/styles/editarPlanoStyles";
-
-import { Heading3 as BaseHeading3, Heading4 as BaseHeading4 } from "@/components/Common";
-import { styled } from "styled-components";
-import dynamic from "next/dynamic";
-
-
-const EditPlanoAulaPage = () => {
-  const [plano, setPlano] = useState<IPlanoAulaDetalhado | null>(null);
-  const [detalhesPlano, setDetalhesPlano] = useState("");
-  const [recursosGerais, setRecursosGerais] = useState<string[]>([]);
-  const [avaliacao, setAvaliacao] = useState("");
-  const [aulas, setAulas] = useState<any[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const params = useParams();
-  const router = useRouter();
-
- 
-  
-  const Heading3 = styled(BaseHeading3)`
-    color: ${(props) => props.theme.colors.primary};
-  `;
-
-  const Heading4 = styled(BaseHeading4)`
-    color: ${(props) => props.theme.colors.primary};
-  `;
-
-  const FullWidthButton = styled(BaseButton)`
-  width: 100%;
-`;
-
-
-  const mdeOptions = useMemo(() => ({
-    spellChecker: false,
-    placeholder: "Edite os detalhes do plano aqui...",
-    status: false,
-  }), []);
-
-  useEffect(() => {
-    const fetchPlanoAula = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`/api/detalhePlanoAula/${params.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const planoData = response.data.planos;
-        setPlano(planoData);
-        setDetalhesPlano(planoData.detalhes_plano_completo || "");
-        setRecursosGerais(planoData.recursos_gerais || []);
-        setAvaliacao(planoData.avaliacao || "");
-        setAulas(planoData.aulas || []);
-        setIsLoading(false);
-      } catch (error: any) {
-        const message = error?.response?.data?.message || "Erro ao buscar plano de aula.";
-        setErrorMessage(message);
-        setIsLoading(false);
-      }
-    };
-
-    fetchPlanoAula();
-  }, [params.id]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  };
-
-  const handleSalvar = async () => {
-    try {
-      setIsSaving(true);
-      const token = localStorage.getItem("token");
-      const markdownLimpo = detalhesPlano.replace(/\r\n/g, "\n");
-
-      await axios.put(`/api/editarPlanoAula/${params.id}`, {
-        detalhes_plano_completo: markdownLimpo,
-        recursos_gerais: recursosGerais,
-        avaliacao,
-        aulas,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      alert("Plano de aula atualizado com sucesso!");
-      router.push(`/detalhePlanoAula/${params.id}`);
-    } catch (error) {
-      console.error("Erro ao salvar plano:", error);
-      alert("Erro ao salvar plano de aula.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleRecursoChange = (index: number, value: string) => {
-    const novos = [...recursosGerais];
-    novos[index] = value;
-    setRecursosGerais(novos);
-  };
-
-  const handleRemoveRecurso = (index: number) => {
-    const novos = recursosGerais.filter((_, i) => i !== index);
-    setRecursosGerais(novos);
-  };
-
-  const handleAddRecurso = () => {
-    setRecursosGerais([...recursosGerais, ""]);
-  };
-
-  const handleAulaChange = (index: number, field: string, value: string) => {
-    const novasAulas = [...aulas];
-    novasAulas[index] = { ...novasAulas[index], [field]: value };
-    setAulas(novasAulas);
-  };
-
-  const handleAtividadeChange = (
-    aulaIndex: number,
-    atividadeIndex: number,
-    field: string,
-    value: string
-  ) => {
-    const novasAulas = [...aulas];
-    const atividades = [...novasAulas[aulaIndex].atividades];
-    atividades[atividadeIndex] = { ...atividades[atividadeIndex], [field]: value };
-    novasAulas[aulaIndex].atividades = atividades;
-    setAulas(novasAulas);
-  };
-
-  if (isLoading) return <Loading />;
-  if (errorMessage)
-    return (
-      <ErrorPopup>
-        {errorMessage}
-        <button onClick={() => setErrorMessage(null)}>✖</button>
-      </ErrorPopup>
-    );
-
-  return (
-    <>
-      <Sidebar links={[{ label: "Início", href: "/admin" }]} />
-      <MainWrapper>
-        <Header onLogout={handleLogout} onBack={() => router.back()} />
-          <PlanoContent>
-            <Heading3>✏️ Editar Plano: {plano?.titulo}</Heading3>
-            <Paragraph><strong>Duração Total:</strong> {plano?.duracao_total}</Paragraph>
-            {plano?.habilidade_bncc ? (
-              <>
-                <Paragraph><strong>Componente Curricular:</strong> {plano.habilidade_bncc.componenteCurricular}</Paragraph>
-                <Paragraph><strong>Ano/Série:</strong> {plano.habilidade_bncc.anoSerie}</Paragraph>
-                <Paragraph><strong>Código BNCC:</strong> {plano.habilidade_bncc.codigo}</Paragraph>
-                <Paragraph><strong>Habilidade BNCC:</strong> {plano.habilidade_bncc.descricao}</Paragraph>
-              </>
-            ) : (
-              <Paragraph style={{ color: "#888" }}>
-                <strong>Habilidade BNCC:</strong> Não vinculada a este plano.
-              </Paragraph>
-            )}
-
-            <Section>
-              <Heading4>📦 Editar Recursos Gerais</Heading4>
-              {recursosGerais.map((recurso, index) => (
-                <RecursoRow key={index}>
-                  <Input
-                    type="text"
-                    value={recurso}
-                    onChange={(e) => handleRecursoChange(index, e.target.value)}
-                    placeholder={`Recurso ${index + 1}`}
-                    style={{ flex: 1 }}
-                  />
-                  <DeleteButton onClick={() => handleRemoveRecurso(index)}>
-                    <span className="icon">X</span>
-                  </DeleteButton>
-                </RecursoRow>
-              ))}
-              <Button type="button" onClick={handleAddRecurso}>
-                ➕ Adicionar Recurso
-              </Button>
-            </Section>
-
-            <Section>
-              <Heading4>📋 Editar Detalhes do Plano</Heading4>
-              <SimpleMDE value={detalhesPlano} onChange={setDetalhesPlano} options={mdeOptions} />
-            </Section>
-
-            <Section>
-              <Heading4>🎯 Editar Avaliação</Heading4>
-              <Textarea
-                value={avaliacao}
-                onChange={(e) => setAvaliacao(e.target.value)}
-                rows={4}
-              />
-            </Section>
-
-            <Section>
-              <Heading4>📚 Editar Aulas Planejadas</Heading4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-                {aulas.map((aula, aulaIndex) => (
-                  <AulaCard key={aula.id}>
-                    <Paragraph><strong>Aula {aula.numero_aula}</strong></Paragraph>
-
-                    <Paragraph><strong>Título:</strong></Paragraph>
-                    <Input
-                      type="text"
-                      value={aula.titulo}
-                      onChange={(e) => handleAulaChange(aulaIndex, "titulo", e.target.value)}
-                      placeholder="Título da aula"
-                      style={{ marginBottom: "10px" }}
-                    />
-
-                    <Paragraph><strong>Objetivo:</strong></Paragraph>
-                    <Textarea
-                      value={aula.objetivo}
-                      onChange={(e) => handleAulaChange(aulaIndex, "objetivo", e.target.value)}
-                      rows={3}
-                    />
-
-                    {Array.isArray(aula.atividades) && aula.atividades.length > 0 && (
-                      <Section>
-                        <Heading4 style={{ marginTop: "20px" }}>🧩 Atividades</Heading4>
-                        {aula.atividades.map((atividade: { id: any; etapa: string | number | readonly string[] | undefined; tempo: string | number | readonly string[] | undefined; descricao: string | number | readonly string[] | undefined; }, atividadeIndex: number) => (
-                          <AtividadeCard key={atividade.id || atividadeIndex}>
-                            <Paragraph><strong>Etapa:</strong></Paragraph>
-                            <Input
-                              type="text"
-                              value={atividade.etapa}
-                              onChange={(e) =>
-                                handleAtividadeChange(aulaIndex, atividadeIndex, "etapa", e.target.value)
-                              }
-                              placeholder="Etapa da atividade"
-                              style={{ marginBottom: "10px" }}
-                            />
-
-                            <Paragraph><strong>Tempo:</strong></Paragraph>
-                            <Input
-                              type="text"
-                              value={atividade.tempo}
-                              onChange={(e) =>
-                                handleAtividadeChange(aulaIndex, atividadeIndex, "tempo", e.target.value)
-                              }
-                              placeholder="Tempo estimado"
-                              style={{ marginBottom: "10px" }}
-                            />
-
-                            <Paragraph><strong>Descrição:</strong></Paragraph>
-                            <Textarea
-                              value={atividade.descricao}
-                              onChange={(e) =>
-                                handleAtividadeChange(aulaIndex, atividadeIndex, "descricao", e.target.value)
-                              }
-                              rows={3}
-                            />
-                          </AtividadeCard>
-                        ))}
-                      </Section>
-                    )}
-                  </AulaCard>
-                ))}
-              </div>
-            </Section>
-
-            <FullWidthButton type="button" onClick={handleSalvar} disabled={isSaving}>
-              {isSaving ? "Salvando..." : "Salvar Alterações"}
-            </FullWidthButton>
-
-          </PlanoContent>
-        
-      </MainWrapper>
-    </>
-  );
-};
-
-export default EditPlanoAulaPage;
-
-*/
-
-
-// src/app/admin/editarPlanoAula/[id]/page.tsx
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
@@ -631,7 +19,6 @@ import {
   Heading4,
 } from "@/components/Common";
 import Loading from "@/components/Loading";
-import Sidebar from "@/components/Sidebar";
 import { IPlanoAulaDetalhado } from "@/types/planoAulaDetalhado";
 
 import {
@@ -673,7 +60,6 @@ const EditPlanoAulaPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  // para forçar banner quando backend retornar erros (opcional)
   const [showServerValidationBanner, setShowServerValidationBanner] = useState(false);
 
   const mdeOptions = useMemo(
@@ -685,7 +71,6 @@ const EditPlanoAulaPage = () => {
     []
   );
 
-  // manter todos os hooks no topo
   const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
@@ -714,7 +99,6 @@ const EditPlanoAulaPage = () => {
     window.location.href = "/login";
   };
 
-  // renderiza mensagens complexas (string | array | objeto)
   const renderErrorMessage = (msg: unknown): React.ReactNode => {
     if (typeof msg === "string") return msg;
     if (Array.isArray(msg)) {
@@ -732,18 +116,16 @@ const EditPlanoAulaPage = () => {
           if (rendered) return rendered;
         }
       } catch (e) {
-        // ignore
+        
       }
     }
     return null;
   };
 
-  // converte errors (possivelmente aninhado ou em chave pontuada) para lista plana {path,msg}
   const flattenErrors = (obj: any, prefix = ""): Array<{ path: string; msg: any }> => {
     const out: Array<{ path: string; msg: any }> = [];
     if (obj == null) return out;
 
-    // caso já seja um objeto com chaves pontuadas (ex: { 'aulas.0.titulo': '...' })
     const hasDotKeys = Object.keys(obj).some((k) => k.includes(".") || /\[\d+\]/.test(k));
     if (hasDotKeys) {
       for (const [k, v] of Object.entries(obj)) {
@@ -752,7 +134,6 @@ const EditPlanoAulaPage = () => {
       return out;
     }
 
-    // caso seja aninhado (obj.aulas = [{titulo: ...}, ...])
     if (typeof obj === "string") {
       out.push({ path: prefix, msg: obj });
       return out;
@@ -774,10 +155,9 @@ const EditPlanoAulaPage = () => {
     return out;
   };
 
-  // encontra primeiro caminho de erro — prioriza chaves pontuadas (caso existam)
   const findFirstErrorPath = (errorsObj: any): string | null => {
     if (!errorsObj) return null;
-    // se keys pontuadas existirem, usa a primeira
+  
     const keys = Object.keys(errorsObj);
     const dottedKey = keys.find((k) => k.includes(".") || /\[\d+\]/.test(k));
     if (dottedKey) return dottedKey;
@@ -787,21 +167,16 @@ const EditPlanoAulaPage = () => {
     return flat[0].path || null;
   };
 
-  // tenta localizar elemento no DOM a partir do path; aceita notações: 'aulas.0.titulo' e 'aulas[0].titulo'
   const scrollToPath = (path: string): boolean => {
     if (!path) return false;
 
-    const trySelectors = (p: string) => {
-      // name exato
+    const trySelectors = (p: string) => {    
       let el = document.querySelector(`[name="${p}"]`) as HTMLElement | null;
-      if (el) return el;
-      // data-field
+      if (el) return el;     
       el = document.querySelector(`[data-field="${p}"]`) as HTMLElement | null;
-      if (el) return el;
-      // name que comece com (prefix)
+      if (el) return el;     
       el = document.querySelector(`[name^="${p}"]`) as HTMLElement | null;
-      if (el) return el;
-      // tenta último segmento (ex: 'titulo')
+      if (el) return el;     
       const last = p.split(".").slice(-1)[0];
       if (last) {
         el = document.querySelector(`[name$=".${last}"]`) as HTMLElement | null;
@@ -814,7 +189,6 @@ const EditPlanoAulaPage = () => {
       return null;
     };
 
-    // gera candidatos (ponto e colchetes)
     const candidates = [path, path.replace(/\.(\d+)\./g, "[$1].").replace(/\.(\d+)$/g, "[$1]"), path.replace(/\[(\d+)\]/g, ".$1")];
     for (const cand of candidates) {
       const el = trySelectors(cand);
@@ -823,7 +197,6 @@ const EditPlanoAulaPage = () => {
         try {
           (el as HTMLElement).focus({ preventScroll: true });
         } catch (e) {}
-        // highlight temporário
         el.classList.add("error-highlight");
         setTimeout(() => el.classList.remove("error-highlight"), 2000);
         return true;
@@ -839,7 +212,6 @@ const EditPlanoAulaPage = () => {
       const ok = scrollToPath(first);
       if (ok) return;
     }
-    // fallback: tenta chaves de topo
     const keys = Object.keys(errorsObj || {});
     for (const key of keys) {
       if (scrollToPath(key)) return;
@@ -902,8 +274,7 @@ const EditPlanoAulaPage = () => {
   });
 
   return (
-    <>
-      {/* <Sidebar links={[{ label: "Início", href: "/admin" }]} /> */}
+    <>   
       <MainWrapper>
         <Header onLogout={handleLogout} onBack={() => router.back()} />
         <PlanoContent>
@@ -942,10 +313,8 @@ const EditPlanoAulaPage = () => {
               setIsSaving(true);
               setErrorMessage(null);
               setSuccessMessage(null);
-              // reset server banner
               setShowServerValidationBanner(false);
 
-              // validação manual para capturar mensagens do Yup e setErrors com paths
               try {
                 await validationSchema.validate(values, { abortEarly: false });
               } catch (validationError: any) {
@@ -956,8 +325,6 @@ const EditPlanoAulaPage = () => {
                   });
                 }
                 setErrors(errObj);
-                // faz com que o banner apareça (usamos formik.submitCount também)
-                // jump para o primeiro erro encontrado
                 jumpToFirstError(errObj);
                 setSubmitting(false);
                 setIsSaving(false);
@@ -982,7 +349,6 @@ const EditPlanoAulaPage = () => {
                 );
 
                 setSuccessMessage("Plano de aula atualizado com sucesso!");
-                // esconde banner (caso estivesse visível)
                 setShowServerValidationBanner(false);
                 setTimeout(() => {
                   setSuccessMessage(null);
@@ -991,8 +357,7 @@ const EditPlanoAulaPage = () => {
               } catch (err: any) {
                 console.error("Erro ao salvar plano:", err);
                 const message = err?.response?.data?.message || "Erro ao salvar plano de aula.";
-                setErrorMessage(message);
-                // se backend retornou erros estruturados, preenche setErrors e mostra banner
+                setErrorMessage(message);               
                 const serverErrors = err?.response?.data?.errors;
                 if (serverErrors) {
                   setShowServerValidationBanner(true);
@@ -1006,12 +371,8 @@ const EditPlanoAulaPage = () => {
             }}
           >
             {({ values, setFieldValue, setFieldTouched, isSubmitting, errors, touched, submitCount }) => {
-              // banner aparece se já submeteu ou se servidor pediu para exibir
               const showBanner = submitCount > 0 || showServerValidationBanner;
-
-              // controle para exibir mensagens inline: se campo foi tocado (touched) ou se já submeteu
               const showFieldError = (path: string) => {
-                // getIn helper simples
                 const getIn = (obj: any, p: string) => {
                   if (!obj) return undefined;
                   const parts = p.replace(/\[(\d+)\]/g, ".$1").split(".");
@@ -1030,7 +391,6 @@ const EditPlanoAulaPage = () => {
 
               return (
                 <Form ref={formRef}>
-                  {/* Banner: só após submit (ou backend) */}
                   {showBanner && flatErrors.length > 0 && (
                     <div style={stickyBannerStyle} role="alert">
                       <div style={{ fontWeight: 700 }}>
@@ -1282,9 +642,7 @@ const EditPlanoAulaPage = () => {
             }}
           </Formik>
         </PlanoContent>
-      </MainWrapper>
-
-      {/* Highlight CSS */}
+      </MainWrapper>      
       <style jsx>{`
         .error-highlight {
           box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.18);

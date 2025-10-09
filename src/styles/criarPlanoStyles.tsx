@@ -1,60 +1,3 @@
-/*import styled from "styled-components";
-
-export const FormRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 24px;
-`;
-
-export const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 280px;
-`;
-
-export const Label = styled.label`
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: ${(props) => props.theme.colors.text};
-`;
-
-export const Select = styled.select`
-  width: 100%;
-  padding: 10px;
-  font-size: ${(props) => props.theme.fontSizes.p};
-  border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 6px;
-  background-color: #fff;
-`;
-
-export const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  font-size: ${(props) => props.theme.fontSizes.p};
-  border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 6px;
-`;
-
-export const MultiSelect = styled.select`
-  width: 100%;
-  height: 140px;
-  padding: 10px;
-  font-size: ${(props) => props.theme.fontSizes.p};
-  border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 6px;
-  margin-top: 8px;
-`;
-
-export const PageTitle = styled.h2`
-  font-size: ${(props) => props.theme.fontSizes.h2};
-  color: ${(props) => props.theme.colors.primary};
-  margin-bottom: 24px;
-`;
-
-*/
-
 import styled from "styled-components";
 
 export const FormRow = styled.div`
@@ -76,14 +19,12 @@ export const FormGroup = styled.div`
   min-width: 0; /* evita overflow dentro do flex */
 `;
 
-/* Label */
 export const Label = styled.label`
   font-weight: bold;
   margin-bottom: 8px;
   color: ${(props) => props.theme.colors.text};
 `;
 
-/* Inputs e selects com foco azul consistente */
 const baseField = `
   width: 100%;
   padding: 10px;
@@ -95,7 +36,6 @@ const baseField = `
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 `;
 
-/* Select padrão */
 export const Select = styled.select`
   ${baseField}
   appearance: none;
@@ -106,7 +46,6 @@ export const Select = styled.select`
   }
 `;
 
-/* Input padrão */
 export const Input = styled.input`
   width: 100%;
   padding: 10px;
@@ -126,7 +65,6 @@ export const Input = styled.input`
     box-shadow: 0 0 0 4px rgba(0, 120, 212, 0.08);
   }
 
-  /* remove estilo da autofill do Chrome/Safari */
   &:-webkit-autofill,
   &:-webkit-autofill:hover,
   &:-webkit-autofill:focus {
@@ -142,7 +80,6 @@ export const Input = styled.input`
   }
 `;
 
-/* Select que mostra várias linhas (lista) */
 export const MultiSelect = styled.select`
   ${baseField}
   height: 140px;
@@ -157,14 +94,12 @@ export const MultiSelect = styled.select`
   }
 `;
 
-/* Título da página */
 export const PageTitle = styled.h2`
   font-size: ${(props) => props.theme.fontSizes.h2};
   color: ${(props) => props.theme.colors.primary};
   margin-bottom: 24px;
 `;
 
-/* Botão full width opcional (exporte e use onde precisar) */
 export const FullWidthButton = styled.button`
   display: block;
   width: 100%;

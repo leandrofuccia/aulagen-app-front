@@ -5,7 +5,7 @@ export async function PUT(req: Request) {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/planoAula/";
     const url = new URL(req.url);
-    const id = url.pathname.split("/").pop(); // Extrai o ID da URL
+    const id = url.pathname.split("/").pop();
 
     if (!id) {
       return NextResponse.json({ message: "ID não fornecido" }, { status: 400 });
@@ -18,7 +18,6 @@ export async function PUT(req: Request) {
 
     const body = await req.json();
 
-    // Envia os dados atualizados para o back-end
     const response = await axios.put(`${apiUrl}${id}`, body, {
       headers: {
         Authorization: token,

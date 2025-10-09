@@ -9,7 +9,6 @@ export interface IPlanoAula {
   recursos_gerais?: string[];
   detalhes_plano_completo?: string;
   avaliacao?: string;
-  // agora é um array de habilidades
   habilidade_bncc?: IHabilidadeBNCC[];
   criador?: IUsuario;
   aulas?: IAula[];

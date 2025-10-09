@@ -1,11 +1,9 @@
 import styled from "styled-components";
 
-// Seção genérica com espaçamento inferior
 export const Section = styled.div`
   margin-bottom: ${(props) => props.theme.spacing.xl};
 `;
 
-// Card base com sombra leve e bordas suaves
 export const Card = styled.div`
   background-color: ${(props) => props.theme.colors.background};
   border: 1px solid ${(props) => props.theme.colors.border};
@@ -15,7 +13,6 @@ export const Card = styled.div`
   box-shadow: ${(props) => props.theme.shadow.sm};
 `;
 
-// Campo de texto estilizado para textarea
 export const Textarea = styled.textarea`
   width: 100%;
   padding: ${(props) => props.theme.spacing.md};
@@ -34,19 +31,16 @@ export const Textarea = styled.textarea`
   }
 `;
 
-// Linha de recurso com espaçamento horizontal
 export const RecursoRow = styled.div`
   display: flex;
   gap: ${(props) => props.theme.spacing.sm};
   margin-bottom: ${(props) => props.theme.spacing.sm};
 `;
 
-// Card específico para aulas
 export const AulaCard = styled(Card)`
   background-color: #f9f9f9;
 `;
 
-// Card específico para atividades
 export const AtividadeCard = styled(Card)`
   background-color: #ffffff;
 `;
@@ -91,7 +85,7 @@ export const Button = styled.button`
 
 export const DeleteButton = styled.button`
   background-color: #fff;
-  color: ${(props) => props.theme.colors.secondary}; // laranja AulaGen
+  color: ${(props) => props.theme.colors.secondary}; 
   border: 1px solid ${(props) => props.theme.colors.secondary};
   padding: 6px 12px;
   border-radius: ${(props) => props.theme.radius.md};
@@ -109,7 +103,7 @@ export const DeleteButton = styled.button`
   }
 
   span.icon {
-    color: ${(props) => props.theme.colors.secondary}; // ícone laranja
+    color: ${(props) => props.theme.colors.secondary};
     font-weight: bold;
   }
 `;
